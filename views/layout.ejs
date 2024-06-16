@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rumble Junction</title>
+  <title><%= title %></title>
   <link rel="stylesheet" href="/style.css">
+  <%- include('themes/' + res.locals.theme) %>
 </head>
 <body>
   <header>
-    <h1>Dreadful</h1>
+    <h1>Simple Blog</h1>
     <nav>
       <a href="/">Home</a>
       <a href="/users">Users</a>
       <a href="/posts">Posts</a>
       <a href="/comments">Comments</a>
+      <a href="/?theme=light">Light Theme</a>
+      <a href="/?theme=dark">Dark Theme</a>
     </nav>
   </header>
   <main>
