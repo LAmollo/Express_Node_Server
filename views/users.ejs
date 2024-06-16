@@ -1,0 +1,25 @@
+<h2>Users</h2>
+<form id="addUserForm">
+  <input type="text" name="name" placeholder="Name" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <button type="submit">Add User</button>
+</form>
+<ul id="userList">
+  <% users.forEach(user => { %>
+    <li><%= user.name %> - <%= user.email %></li>
+  <% }) %>
+</ul>
+
+<script>
+  document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: Date.now().toString(), name, email })
+    });
+    location.reload();
+  });
+</script>

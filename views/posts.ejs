@@ -1,0 +1,27 @@
+<h2>Posts</h2>
+<form id="addPostForm">
+  <input type="text" name="title" placeholder="Title" required>
+  <textarea name="content" placeholder="Content" required></textarea>
+  <input type="text" name="userId" placeholder="User ID" required>
+  <button type="submit">Add Post</button>
+</form>
+<ul id="postList">
+  <% posts.forEach(post => { %>
+    <li><%= post.title %> - <%= post.content %> (User ID: <%= post.userId %>)</li>
+  <% }) %>
+</ul>
+
+<script>
+  document.getElementById('addPostForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = e.target.title.value;
+    const content = e.target.content.value;
+    const userId = e.target.userId.value;
+    await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: Date.now().toString(), title, content, userId })
+    });
+    location.reload();
+  });
+</script>
