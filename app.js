@@ -41,3 +41,10 @@ const requestLogger = (req, res, next) => {
   app.use('/api/posts', postsRouter);
   app.use('/api/comments', commentsRouter);
 
+// Error handling middleware
+  app.use(errorHandler);
+
+  app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+ });
+
