@@ -27,3 +27,17 @@ const requestLogger = (req, res, next) => {
   app.use(checkApiAccess);
   app.use(express.static('public'));
 
+// Set EJS as the template engine
+  app.set('view engine', 'ejs');
+
+// Routes
+  const indexRouter = require('./routes/index');
+  const usersRouter = require('./routes/users');
+  const postsRouter = require('./routes/posts');
+  const commentsRouter = require('./routes/comments');
+
+  app.use('/', indexRouter);
+  app.use('/api/users', usersRouter);
+  app.use('/api/posts', postsRouter);
+  app.use('/api/comments', commentsRouter);
+
