@@ -6,7 +6,7 @@
 </form>
 <ul id="commentList">
   <% comments.forEach(comment => { %>
-    <li><%= comment.content %> (Post ID: <%= comment.postId %>)</li>
+    <li><%= comment.content %> (Post ID: <%= comment.postId %>) <a href="/api/comments/<%= comment.id %>" data-method="delete">Delete</a></li>
   <% }) %>
 </ul>
 
@@ -21,5 +21,17 @@
       body: JSON.stringify({ id: Date.now().toString(), content, postId })
     });
     location.reload();
+  });
+
+  // Method override for DELETE request
+  document.querySelectorAll('a[data-method="delete"]').forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const url = e.target.getAttribute('href');
+      await fetch(url, {
+        method: 'DELETE'
+      });
+      location.reload();
+    });
   });
 </script>
