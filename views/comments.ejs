@@ -1,0 +1,25 @@
+<h2>Comments</h2>
+<form id="addCommentForm">
+  <textarea name="content" placeholder="Content" required></textarea>
+  <input type="text" name="postId" placeholder="Post ID" required>
+  <button type="submit">Add Comment</button>
+</form>
+<ul id="commentList">
+  <% comments.forEach(comment => { %>
+    <li><%= comment.content %> (Post ID: <%= comment.postId %>)</li>
+  <% }) %>
+</ul>
+
+<script>
+  document.getElementById('addCommentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const content = e.target.content.value;
+    const postId = e.target.postId.value;
+    await fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: Date.now().toString(), content, postId })
+    });
+    location.reload();
+  });
+</script>
