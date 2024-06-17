@@ -1,18 +1,26 @@
-<%- include('layout', { title: 'Home' }) %>
-<h2>Posts</h2>
-<ul>
-  <% posts.forEach(post => { %>
-    <li>
-      <h3><%= post.title %></h3>
-      <p><%= post.content %></p>
-      <% if (post.image) { %>
-        <img src="/images/<%= post.image %>" alt="<%= post.title %>" width="300">
-      <% } %>
-      <a href="/edit/<%= post.id %>">Edit</a>
-      <form action="/delete/<%= post.id %>?_method=DELETE" method="POST" style="display:inline;">
-        <button type="submit">Delete</button>
-      </form>
-    </li>
-  <% }) %>
-</ul>
-<a href="/users">Manage Users</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Simple Blog</title>
+</head>
+<body>
+  <h1>Simple Blog</h1>
+  <a href="/new">Create New Post</a>
+  <ul>
+    <% posts.forEach(post => { %>
+      <li>
+        <h2><%= post.title %></h2>
+        <p><%= post.content %></p>
+        <a href="/edit/<%= post.id %>">Edit</a>
+        <form action="/delete/<%= post.id %>?_method=DELETE" method="POST">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+  <a href="/users">Manage Users</a>
+</body>
+</html>
