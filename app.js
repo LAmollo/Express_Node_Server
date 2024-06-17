@@ -1,46 +1,95 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Import routes
-const indexRoutes = require('./routes/index');
-const postRoutes = require('./routes/posts');
-const userRoutes = require('./routes/users');
-const commentRoutes = require('./routes/comments');
+// Sample data
+let users = [];
+let posts = [];
+let comments = [];
 
-// Middleware
+// Middleware setup
+app.use((req, res, next) => {
+  console.log(`${req.method} request for '${req.url}'`);
+  next();
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
-// Data
-app.locals.posts = require('./data').posts;
-app.locals.users = require('./data').users;
-app.locals.comments = require('./data').comments;
-
 // Routes
-app.use('/', indexRoutes);
-app.use('/posts', postRoutes);
-app.use('/users', userRoutes);
-app.use('/comments', commentRoutes);
+app.get('/', (req, res) => {
+  res.render('index', { posts });
+});
 
-// Custom middleware for simple authentication
-const simpleAuth = (req, res, next) => {
-  const { auth } = req.query;
-  if (auth === 'true') {
-    next();
-  } else {
-    res.status(403).send('Forbidden: Authentication required');
-  }
-};
+app.get('/new', (req, res) => {
+  res.render('new');
+});
 
-// Error-handling middleware
+app.post('/new', (req, res) => {
+  console.log('Received POST request to /new');
+  console.log('Request body:', req.body);
+  const post = {
+    id: posts.length + 1,
+    title: req.body.title,
+    content: req.body.content
+  };
+  posts.push(post);
+  console.log('New post added:', post);
+  res.redirect('/');
+});
+
+app.get('/edit/:id', (req, res) => {
+  const post = posts.find(p => p.id === parseInt(req.params.id));
+  res.render('edit', { post });
+});
+
+app.put('/edit/:id', (req, res) => {
+  const post = posts.find(p => p.id === parseInt(req.params.id));
+  post.title = req.body.title;
+  post.content = req.body.content;
+  res.redirect('/');
+});
+
+app.delete('/delete/:id', (req, res) => {
+  posts = posts.filter(p => p.id !== parseInt(req.params.id));
+  res.redirect('/');
+});
+
+app.get('/users', (req, res) => {
+  res.render('users', { users });
+});
+
+app.post('/users', (req, res) => {
+  const user = {
+    id: users.length + 1,
+    name: req.body.name,
+    email: req.body.email
+  };
+  users.push(user);
+  res.redirect('/users');
+});
+
+app.get('/comments', (req, res) => {
+  const { postId } = req.query;
+  const filteredComments = postId ? comments.filter(c => c.postId === parseInt(postId)) : comments;
+  res.json(filteredComments);
+});
+
+app.post('/comments', (req, res) => {
+  const comment = {
+    id: comments.length + 1,
+    postId: parseInt(req.body.postId),
+    content: req.body.content
+  };
+  comments.push(comment);
+  res.redirect('/');
+});
+
+// Error-handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
