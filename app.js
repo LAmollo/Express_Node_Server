@@ -1,56 +1,51 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+const methodOverride = require('method-override');
+const path = require('path');
 const app = express();
-const port = 3000;
-const { users, posts, comments } = require('./data');
+const PORT = 3000;
+
+// Import routes
+const indexRoutes = require('./routes/index');
+const postRoutes = require('./routes/posts');
+const userRoutes = require('./routes/users');
+const commentRoutes = require('./routes/comments');
 
 // Middleware
-const setTheme = (req, res, next) => {
-  if (req.query.theme) {
-    res.locals.theme = req.query.theme;
-  } else {
-    res.locals.theme = req.cookies.theme || 'light';
-  }
-  next();
-};
-
-const requestLogger = (req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-};
-
-const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-};
-
-// Middleware setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(express.static('public'));
-app.use(setTheme);
-app.use(requestLogger);
+app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// View engine setup
 app.set('view engine', 'ejs');
 
+// Data
+app.locals.posts = require('./data').posts;
+app.locals.users = require('./data').users;
+app.locals.comments = require('./data').comments;
+
 // Routes
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const postsRouter = require('./routes/posts');
-const commentsRouter = require('./routes/comments');
+app.use('/', indexRoutes);
+app.use('/posts', postRoutes);
+app.use('/users', userRoutes);
+app.use('/comments', commentRoutes);
 
-app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/posts', postsRouter);
-app.use('/api/comments', commentsRouter);
+// Custom middleware for simple authentication
+const simpleAuth = (req, res, next) => {
+  const { auth } = req.query;
+  if (auth === 'true') {
+    next();
+  } else {
+    res.status(403).send('Forbidden: Authentication required');
+  }
+};
 
-// Error handling middleware
-app.use(errorHandler);
+// Error-handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
