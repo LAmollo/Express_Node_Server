@@ -1,6 +1,19 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
 const { posts } = require('../data');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/', (req, res) => {
   if (req.query.userId) {
@@ -10,10 +23,14 @@ router.get('/', (req, res) => {
   res.json(posts);
 });
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('image'), (req, res) => {
   const newPost = req.body;
+  if (req.file) {
+    newPost.image = req.file.filename;
+  }
+  newPost.id = Date.now().toString();
   posts.push(newPost);
-  res.json({ success: true, post: newPost });
+  res.redirect('/');
 });
 
 router.patch('/:id', (req, res) => {

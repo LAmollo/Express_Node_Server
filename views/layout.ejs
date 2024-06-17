@@ -3,24 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
   <link rel="stylesheet" href="/style.css">
-  <%- include('themes/' + res.locals.theme) %>
+  <title><%= title %></title>
 </head>
 <body>
   <header>
     <h1>Simple Blog</h1>
     <nav>
       <a href="/">Home</a>
-      <a href="/users">Users</a>
-      <a href="/posts">Posts</a>
-      <a href="/comments">Comments</a>
-      <a href="/?theme=light">Light Theme</a>
-      <a href="/?theme=dark">Dark Theme</a>
+      <a href="/new">Create New Post</a>
+      <a href="/users">Manage Users</a>
     </nav>
   </header>
   <main>
-    <%- body %>
+    <%= body %>
   </main>
 </body>
 </html>

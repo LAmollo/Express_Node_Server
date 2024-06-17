@@ -1,5 +1,18 @@
-<% include layout %>
-
-<%- include('users', { users: users }) %>
-<%- include('posts', { posts: posts }) %>
-<%- include('comments', { comments: comments }) %>
+<%- include('layout', { title: 'Home' }) %>
+<h2>Posts</h2>
+<ul>
+  <% posts.forEach(post => { %>
+    <li>
+      <h3><%= post.title %></h3>
+      <p><%= post.content %></p>
+      <% if (post.image) { %>
+        <img src="/images/<%= post.image %>" alt="<%= post.title %>" width="300">
+      <% } %>
+      <a href="/edit/<%= post.id %>">Edit</a>
+      <form action="/delete/<%= post.id %>?_method=DELETE" method="POST" style="display:inline;">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
+<a href="/users">Manage Users</a>
